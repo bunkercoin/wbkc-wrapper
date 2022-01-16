@@ -10,9 +10,12 @@ import time
 import sqlite3
 import address_utils
 
+from web3.auto import w3
+from eth_account.messages import encode_defunct
+
+
 
 api = Flask(__name__)
-
 limiter = Limiter(
     api,
     key_func=get_remote_address,
@@ -24,7 +27,7 @@ BKC_PRIVATE_KEY = 'QUpT6iQkuPi64bqSG2VafNz3Wkaz39dnSkpKytabuNrgm4gbBvVn'
 NODE_ADDRESS = 'BTdSU3Dh5hm17EtDfxPCd9wdzFMqayfNzk'
 NODE_ID = 0
 NREQUIRED = 1 #for funds unlocking
-MATIC_PRIVATE_KEY = ''
+MATIC_PRIVATE_KEY = '4d9e599423f0a37115c35f1dc4b749a4754545e4172d3901260a484512eee4d6'
 
 #all the authority node address
 PEER_NODES = ["BTdSU3Dh5hm17EtDfxPCd9wdzFMqayfNzk"]
@@ -48,12 +51,18 @@ def derive_key(derivation):
 	publicKey = address_utils.getPublicKey(derivation)
 	return publicKey.hex()
 
-
+def validateMaticAddress(address):
+	if not w3.isChecksumAddress(address):
+		raise Exception("Not a matic checksum address")
+	return true
 
 # requests a node for it's claim of deposit
 @api.route('/getDepositAddress/<string:addressMatic>', methods=['GET'])
 def deposit_address(addressMatic):
 
+	#validate input
+	validateMaticAddress(addressMatic)
+	
 	publicKeyAddress = derive_key(addressMatic)
 	message = json.dumps({"addressMatic": addressMatic, "depositAddress": publicKeyAddress})
 	signature = rpc_connection.signmessage(NODE_ADDRESS, message)
@@ -85,6 +94,8 @@ def verify_address(signedDerivations):
 	
 	
 	matic = json.loads(claim)["addressMatic"]
+	#validate input
+	validateMaticAddress(matic)
 	
 	# Add the data to the local db
 	con = sqlite3.connect('database.db')
@@ -99,27 +110,34 @@ def verify_address(signedDerivations):
 @api.route('/emitwBKC/<string:maticAddress>', methods=['GET'])
 def emit_wBKC(maticAddress):
 
-
+	#validate input
+	validateMaticAddress(maticAddress)
+	
 	# Check if we have generated a deposit address
 	con = sqlite3.connect('database.db')
 	db = con.cursor()
 	
-	db.execute("SELECT * FROM depositAddress WHERE matic=?",maticAddress)
+	db.execute("SELECT * FROM depositAddress WHERE matic=?",(maticAddress,))
 	record = db.fetchall()
 	
 	con.commit()
 	con.close()
 	
-	if record.length != 1:
+	#we expect only 1 record
+	if len(record) != 1:
 		raise Exception("No record for address")
 	
 	#TODO:
 	#check if a deposit is made
-	#create a signed transaction with MATIC_PRIVATE_KEY to emit wBKC for amount
-	#the messages should be joined by the user(somehow)
+	#emit for the specific depost
+	coins = 1000
+	# signed data respresents: matic address + how many coins
+	data = record[0][0] + str(coins)
+	message = encode_defunct(text=data)
+	signed_message =  w3.eth.account.sign_message(message, private_key=MATIC_PRIVATE_KEY)
 	
-	return json.dumps(data)
-
+	#return r s v to the client
+	return signed_message.signature.hex()
 
 
 
