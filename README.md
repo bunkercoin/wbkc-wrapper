@@ -1,2 +1,3 @@
 # wbkc-wrapper
-The wBunkercoin Wrapper!
+The wBunkercoin Custodian Wrapper.
+
