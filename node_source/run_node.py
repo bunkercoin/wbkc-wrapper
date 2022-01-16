@@ -1,32 +1,49 @@
 from flask import Flask, json
-
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 from bitcoinrpc.authproxy import AuthServiceProxy, JSONRPCException
 import base64
-
 import os
 import hashlib
+import time
+import sqlite3
 import address_utils
+
 
 api = Flask(__name__)
 
-#my node details
-secret = 'QUpT6iQkuPi64bqSG2VafNz3Wkaz39dnSkpKytabuNrgm4gbBvVn'
-node_address = 'BTdSU3Dh5hm17EtDfxPCd9wdzFMqayfNzk'
-nodeId = 0
-nrequired = 1 #for funds unlocking
+limiter = Limiter(
+    api,
+    key_func=get_remote_address,
+    default_limits=["200 per day", "60 per hour"]
+)
 
+#my node details
+BKC_PRIVATE_KEY = 'QUpT6iQkuPi64bqSG2VafNz3Wkaz39dnSkpKytabuNrgm4gbBvVn'
+NODE_ADDRESS = 'BTdSU3Dh5hm17EtDfxPCd9wdzFMqayfNzk'
+NODE_ID = 0
+NREQUIRED = 1 #for funds unlocking
+MATIC_PRIVATE_KEY = ''
 
 #all the authority node address
-peer_nodes = ["BTdSU3Dh5hm17EtDfxPCd9wdzFMqayfNzk"]
+PEER_NODES = ["BTdSU3Dh5hm17EtDfxPCd9wdzFMqayfNzk"]
 
 #rpc connection
 rpc_connection = AuthServiceProxy("http://%s:%s@127.0.0.1:9999"%("user", "pass"))
-rpc_connection.importprivkey(secret, "node", True)
+rpc_connection.importprivkey(BKC_PRIVATE_KEY, "node", True)
+
+
+#database tables must be created only once
+#con = sqlite3.connect('database.db')
+#db = con.cursor()
+#db.execute("CREATE TABLE depositAddress (matic text,bkc text,date text,message text)")
+#con.commit()
+#con.close()
 
 
 def derive_key(derivation):
-	deposit_secret = secret+derivation
+	deposit_secret = BKC_PRIVATE_KEY+derivation
 	derivation = address_utils.sha256(deposit_secret.encode('utf-8'))
 	publicKey = address_utils.getPublicKey(derivation)
 	return publicKey.hex()
@@ -39,7 +56,7 @@ def deposit_address(addressMatic):
 
 	publicKeyAddress = derive_key(addressMatic)
 	message = json.dumps({"addressMatic": addressMatic, "depositAddress": publicKeyAddress})
-	signature = rpc_connection.signmessage(node_address, message)
+	signature = rpc_connection.signmessage(NODE_ADDRESS, message)
 	
 	result = {"message":message, "signature":signature}
 	
@@ -50,22 +67,59 @@ def deposit_address(addressMatic):
 #returns the generated deposit address and watches it.
 @api.route('/verifyDepositAddress/<string:signedDerivations>', methods=['GET'])
 def verify_address(signedDerivations):
-	messages = base64.b64decode(signedDerivations)
-	messages = json.loads(messages)
+	messages_decoded = base64.b64decode(signedDerivations)
+	messages = json.loads(messages_decoded)
 	public_keys = []
-	claim = messages[peer_nodes[0]]["message"]
+	claim = messages[PEER_NODES[0]]["message"]
 	
 	#check if there exists a signed claim from every authority node
-	for node in peer_nodes:
+	for node in PEER_NODES:
 		m = messages[node]
 		valid = rpc_connection.verifymessage(node, m["signature"], m["message"])
 		if not valid or m["message"] != claim:
 			raise Exception('Signatures are not valid')
 		message_content = json.loads(m["message"])
 		public_keys.append(message_content["depositAddress"])
-		
-	multisig_deposit = rpc_connection.addmultisigaddress(nrequired, public_keys)
-	return json.dumps(multisig_deposit)
+	
+	multisig_deposit = rpc_connection.addmultisigaddress(NREQUIRED, public_keys)
+	
+	
+	matic = json.loads(claim)["addressMatic"]
+	
+	# Add the data to the local db
+	con = sqlite3.connect('database.db')
+	db = con.cursor()
+	data = (matic,multisig_deposit,int(time.time()),signedDerivations)
+	db.execute("INSERT INTO depositAddress VALUES (?,?,?,?)",data)
+	con.commit()
+	con.close()
+	
+	return json.dumps(data)
+
+@api.route('/emitwBKC/<string:maticAddress>', methods=['GET'])
+def emit_wBKC(maticAddress):
+
+
+	# Check if we have generated a deposit address
+	con = sqlite3.connect('database.db')
+	db = con.cursor()
+	
+	db.execute("SELECT * FROM depositAddress WHERE matic=?",maticAddress)
+	record = db.fetchall()
+	
+	con.commit()
+	con.close()
+	
+	if record.length != 1:
+		raise Exception("No record for address")
+	
+	#TODO:
+	#check if a deposit is made
+	#create a signed transaction with MATIC_PRIVATE_KEY to emit wBKC for amount
+	#the messages should be joined by the user(somehow)
+	
+	return json.dumps(data)
+
 
 
 
