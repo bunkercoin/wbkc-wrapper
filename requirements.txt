@@ -1,4 +1,6 @@
 flask
+Flask-Caching
+Flask-Limiter
 python-bitcoinrpc
 hashlib
 web3
