@@ -1,6 +1,5 @@
 # Node.js bloat 😄
 node_modules/
-package-lock.json
 
 # Build files
 build/
