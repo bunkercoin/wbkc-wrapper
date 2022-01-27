@@ -1,0 +1,29 @@
+{
+  "name": "wbkc-wrapper",
+  "version": "1.0.0",
+  "description": "Front end for the Bunkercoin wrapper",
+  "main": "index.js",
+  "scripts": {
+    "build": "rm build -rf; tsc; cp -r src/public/* build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bunkercoin/wbkc-wrapper.git"
+  },
+  "keywords": [
+    "bunkercoin",
+    "wrapper",
+    "bkc",
+    "typescript",
+    "tsc"
+  ],
+  "author": "Bunkercoin Project",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bunkercoin/wbkc-wrapper/issues"
+  },
+  "homepage": "https://github.com/bunkercoin/wbkc-wrapper#readme",
+  "dependencies": {
+    "typescript": "^4.5.5"
+  }
+}
