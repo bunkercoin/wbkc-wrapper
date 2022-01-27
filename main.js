@@ -1,2 +1,1 @@
-"use strict";
-console.log("sus");
+"use strict";console.log("sus");
