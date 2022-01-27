@@ -34,7 +34,7 @@ jobs:
           build/
 
     - name: Upload build files to the gh-pages branch
-      uses: LasyIsLazy/github-upload-action@v0.2.0
+      uses: LasyIsLazy/github-upload-action@v0.1.0
       with:
         access-token: ${{ secrets.ACCESS_TOKEN }}
         file-path: build
