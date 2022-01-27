@@ -28,7 +28,7 @@ jobs:
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
-        with:
-          name: wbkc-wrapper-website-${{ github.sha }}
-          path: |
-            build/
+      with:
+        name: wbkc-wrapper-website-${{ github.sha }}
+        path: |
+          build/
