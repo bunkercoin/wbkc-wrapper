@@ -32,3 +32,13 @@ jobs:
         name: wbkc-wrapper-website-${{ github.sha }}
         path: |
           build/
+
+    - name: Upload build files to the gh-pages branch
+      uses: LasyIsLazy/github-upload-action@v0.1.1
+      with:
+        access-token: ${{ secrets.ACCESS_TOKEN }}
+        file-path: build
+        owner: bunkercoin
+        repo: wbkc-wrapper
+        branch-name: gh-pages
+        commit-message: Build files from ${{ github.sha }}
