@@ -16,7 +16,8 @@ from eth_account.messages import encode_defunct
 
 import threading
 #threadsafe locking
-lock = threading.Lock()
+lock_write = threading.Lock()
+lock_withdraw = threading.Lock()
 
 api = Flask(__name__)
 limiter = Limiter(
@@ -32,7 +33,7 @@ NODE_ADDRESS = 'BTdSU3Dh5hm17EtDfxPCd9wdzFMqayfNzk'
 
 MATIC_PRIVATE_KEY = '4d9e599423f0a37115c35f1dc4b749a4754545e4172d3901260a484512eee4d6'
 
-TAX = 1 # BKC per transaction (0.98 tax, 0.02 network cost)
+TAX = 50 # BKC per transaction (0.02 network cost)
 
 RPC = "http://%s:%s@127.0.0.1:9999"%("user", "pass")
 
@@ -45,22 +46,21 @@ def init():
 	rpc_connection.importprivkey(BKC_PRIVATE_KEY, "node", True)
 
 	#database tables must be created only once
-	con = sqlite3.connect('database.db')
 	db = con.cursor()
-	db.execute("CREATE TABLE depositAddress (matic text,bkc text,date text,message text)")
-	db.execute("CREATE TABLE promise (matic text, value text, nonce text, date text, sig text)")
+	db.execute("CREATE TABLE IF NOT EXISTS depositAddress (matic text,bkc text,date text,message text)")
+	db.execute("CREATE TABLE IF NOT EXISTS promise (matic text, value text, nonce text, date text, r text, s text, v text)")
+	db.execute("CREATE INDEX IF NOT EXISTS idx_imatic ON promise (matic)")
 	con.commit()
 	con.close()
 
-	
+#allow multithreaded database access	
+con = sqlite3.connect('database.db', check_same_thread=False)
+
 def db_execute(command, args):
-
-	con = sqlite3.connect('database.db')
-	db = con.cursor()
-	db.execute(command,args)
-	con.commit()
-	con.close()
-	
+	with lock_write:
+		r = con.execute(command,args)
+		con.commit()
+		return r
 	
 def derive_secret(derivation):
 	deposit_secret = BKC_PRIVATE_KEY+"/"+derivation
@@ -82,26 +82,24 @@ def handle_invalid_usage(error):
 
 
 @api.route('/getDepositAddress/<string:addressMatic>', methods=['GET'])
-@cache.memoize(600)
-def deposit_address(addressMatic):
+@cache.memoize(1200)
+def getDepositAddress(addressMatic):
 
 	#validate input
 	validateMaticAddress(addressMatic)
-
-	rpc_connection = AuthServiceProxy(RPC, timeout = 20)
 	
 	deposit_secret = derive_secret(addressMatic)
 	depositAddress = address_utils.getAddress(deposit_secret)
 	depositPrivate = address_utils.getWif(deposit_secret)
 	message = json.dumps({"addressMatic": addressMatic, "depositAddress": depositAddress})
-	with lock:
-		signature = rpc_connection.signmessage(NODE_ADDRESS, message)
+	rpc_connection = AuthServiceProxy(RPC, timeout = 20)
+	signature = rpc_connection.signmessage(NODE_ADDRESS, message)
 	
-		#database
-		data = (addressMatic,depositAddress,int(time.time()),signature)
-		db_execute("INSERT OR IGNORE INTO depositAddress VALUES (?,?,?,?)",data)
-		rpc_connection.importprivkey(depositPrivate, addressMatic)
+	#database
+	data = (addressMatic,depositAddress,int(time.time()),signature)
+	db_execute("INSERT INTO depositAddress VALUES (?,?,?,?)",data)
 	
+	rpc_connection.importprivkey(depositPrivate, addressMatic, False)
 	
 	result = {"message":message, "signature":signature, "node":NODE_ADDRESS}
 	
@@ -114,23 +112,36 @@ def getBalance(addressMatic):
 	#validate input
 	validateMaticAddress(addressMatic)
 	
-	with lock:
-		rpc_connection = AuthServiceProxy(RPC, timeout = 20)
-		total = rpc_connection.getbalance(addressMatic, 60)
+	rpc_connection = AuthServiceProxy(RPC, timeout = 20)
+	total = rpc_connection.getbalance(addressMatic, 60)
 	
 	return json.dumps(total)
+
+
+@api.route('/getPromises/<string:addressMatic>', methods=['GET'])
+@cache.memoize(60)
+def getPromises(addressMatic):
+	#validate input
+	validateMaticAddress(addressMatic)
+	
+	with lock_write:
+		rows = db_execute("SELECT * FROM promise WHERE matic=?", (addressMatic)).fetchall()
+	
+	return json.dumps(rows)
 	
 
 @api.route('/emitwBKC/<string:addressMatic>', methods=['GET'])
-def emit_wBKC(addressMatic): 
+@cache.memoize(60)
+def emitwBKC(addressMatic): 
 
 	#validate input
 	validateMaticAddress(addressMatic)
 	
 	#generate a nonce to avoid respending
-	nonce = w3.sha3(text = str(time.time()+random.random())+MATIC_PRIVATE_KEY).hex()
+	nonce = str(time.time()+random.random()) + MATIC_PRIVATE_KEY + addressMatic
+	nonce = w3.sha3(text = nonce)
 	
-	with lock:
+	with lock_withdraw:
 		rpc_connection = AuthServiceProxy(RPC, timeout = 20)
 		coins = rpc_connection.getbalance(addressMatic, 60)
 	
@@ -143,21 +154,20 @@ def emit_wBKC(addressMatic):
 		
 		# Tax BKC fixed fee
 		coins = float(coins)-TAX
-	
-		data = nonce + addressMatic + str(coins)
-		message = encode_defunct(text=data)
+		coinsWei = w3.toWei(coins, 'ether')
+		hash = w3.solidityKeccak(['bytes32', 'address', 'uint256'], [nonce, addressMatic, coinsWei])
+		message = encode_defunct(hexstr=hash.hex())
 		signed_message =  w3.eth.account.sign_message(message, private_key=MATIC_PRIVATE_KEY)
 	
 		#uppon emission, transfer the funds to the "main" wallet
 		rpc_connection.sendfrom(addressMatic, NODE_ADDRESS, coins+TAX-0.02)
 	
-		#log in the DB
-		data = (addressMatic,coins,nonce,int(time.time()),signed_message.signature.hex())
-		db_execute("INSERT INTO promise VALUES (?,?,?,?,?)",data)
+	#log in the DB
+	data = (addressMatic,coinsWei,nonce.hex(),int(time.time()),to_32byte_hex(signed_message.r),to_32byte_hex(signed_message.s), signed_message.v)
+	db_execute("INSERT INTO promise VALUES (?,?,?,?,?,?,?)",data)
 
-	
 	#give out the signed promisse
-	signature = {"nonce": nonce, "address":addressMatic, "coins": coins, "r":to_32byte_hex(signed_message.r), "s":to_32byte_hex(signed_message.s),"v":signed_message.v}
+	signature = {"nonce": nonce.hex(), "address":addressMatic, "coins": coinsWei, "r":to_32byte_hex(signed_message.r), "s":to_32byte_hex(signed_message.s),"v":signed_message.v}
 	#return r s v to the client
 	return json.dumps(signature)
 
