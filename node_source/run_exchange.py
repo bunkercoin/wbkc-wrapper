@@ -124,9 +124,7 @@ def getPromises(addressMatic):
 	#validate input
 	validateMaticAddress(addressMatic)
 	
-	with lock_write:
-		rows = db_execute("SELECT * FROM promise WHERE matic=?", (addressMatic)).fetchall()
-	
+	rows = db_execute("SELECT * FROM promise WHERE matic=?", [addressMatic]).fetchall()	
 	return json.dumps(rows)
 	
 
@@ -175,4 +173,4 @@ def emitwBKC(addressMatic):
 
 if __name__ == '__main__':
 	init()	
-	api.run(port=5000, threaded=True)
+	api.run(host="0.0.0.0", port=5000, threaded=True)
