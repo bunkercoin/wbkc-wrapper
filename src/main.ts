@@ -5,16 +5,13 @@ const apiURL: string = `https://wrap.bunkercoin.xyz/api/`;
 const minDeposit: number = 0.01;
 const minConfirmations: number = 60;
 
-const web3 = (window as any).ethereum;;
-
 // Buttons
 const metaMaskButton = document.getElementById(`button-add-metamask`) as HTMLButtonElement;
 const submitButton1 = document.querySelector(`#button-deposit-address`) as HTMLButtonElement;
 const submitButton2 = document.querySelector(`#button-getbal`) as HTMLButtonElement;
 const submitButton3 = document.querySelector(`#button-emit`) as HTMLButtonElement;
 
-// Add to MetaMask button
-metaMaskButton.addEventListener(`click`, async () => {
+(async () => {
     const [error, success] = await addNetwork();
     if (error && !success) {
         alert(error);
@@ -39,4 +36,4 @@ metaMaskButton.addEventListener(`click`, async () => {
         console.error(error);
         alert(`An error has occured while enabling MetaMask`);
     });
-});
+})();

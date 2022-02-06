@@ -1,0 +1,1 @@
+const web3 = (window as any).ethereum;
