@@ -12,28 +12,24 @@ const submitButton2 = document.querySelector(`#button-getbal`) as HTMLButtonElem
 const submitButton3 = document.querySelector(`#button-emit`) as HTMLButtonElement;
 
 (async () => {
+    // Add the Polygon network and enable MetaMask
     const [error, success] = await addNetwork();
     if (error && !success) {
         alert(error);
     }
-    web3.enable().then(async () => {
-        // Continue to the next step
-        (document.querySelector(`#add-metamask`) as HTMLDivElement).style.display = `none`;
-        (document.querySelector(`#main`) as HTMLDivElement).style.display = `block`;
-
-        // Show the MetaMask address
-        //@ts-ignore
-        const checksummedAddress = Web3Utils.toChecksumAddress(web3.selectedAddress);
-        (document.querySelector(`#matic-address`) as HTMLSpanElement).innerText = `Your selected address: ${checksummedAddress}`;
-
-        // Get a deposit address
-        const response = await fetch(`${apiURL}/getDepositAddress/${checksummedAddress}`);
-        const data = await response.json();
-        const message = JSON.parse(data.message);
-        const { node, signature } = data;
-        (document.querySelector(`#wrap-deposit-address`) as HTMLParagraphElement).innerText = message.depositAddress;
-    }).catch((error: any) => {
-        console.error(error);
-        alert(`An error has occured while enabling MetaMask`);
+    await web3.enable().catch((error: string) => {
+        alert(`An error has occured while enabling MetaMask: ${error}`);
     });
+
+    // Show the MetaMask address
+    //@ts-ignore - to ignore Web3Utils name to found
+    const checksummedAddress = Web3Utils.toChecksumAddress(web3.selectedAddress);
+    (document.querySelector(`#matic-address`) as HTMLSpanElement).innerText = `Your selected address: ${checksummedAddress}`;
+
+    // Get a deposit address
+    const response = await fetch(`${apiURL}/getDepositAddress/${checksummedAddress}`);
+    const data = await response.json();
+    const message = JSON.parse(data.message);
+    const { node, signature } = data;
+    (document.querySelector(`#wrap-deposit-address`) as HTMLParagraphElement).innerText = message.depositAddress;
 })();
