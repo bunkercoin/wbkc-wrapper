@@ -1,50 +1,42 @@
 // Config  variables
 const polygonAddressRegex: RegExp = /^[0-9a-zA-Z]{40,40}/g;
+const bunkercoinAddressRegex: RegExp = /^[0-9a-zA-Z]{33,33}/g;
 const apiURL: string = `https://wrap.bunkercoin.xyz/api/`;
 const minDeposit: number = 0.01;
-const maxDeposit: number = 100;
-const minConfirmations: number = 3;
+const minConfirmations: number = 60;
 
-// Buttons labeled submit
-const submitButton1: Element | undefined | null = document.querySelector(`#submit1`);
-const submitButton2: Element | undefined | null = document.querySelector(`#submit2`);
-const submitButton3: Element | undefined | null = document.querySelector(`#submit3`);
+const web3 = (window as any).ethereum;;
 
-submitButton1?.addEventListener(`click`, async (event: Event) => { // User clicks on submit button after entering a matic address (Step 1)
-    const input_field = document.querySelector(`#stage1`)!.children[1] as HTMLInputElement;
+// Buttons
+const metaMaskButton = document.getElementById(`button-add-metamask`) as HTMLButtonElement;
+const submitButton1 = document.querySelector(`#button-deposit-address`) as HTMLButtonElement;
+const submitButton2 = document.querySelector(`#button-getbal`) as HTMLButtonElement;
+const submitButton3 = document.querySelector(`#button-emit`) as HTMLButtonElement;
 
-    if (input_field.value && input_field.value.length === 42 && polygonAddressRegex.test(input_field.value.slice(2))) {
-        // Get a desposit address from the API
-        const response: Response = await fetch(`${apiURL}getDepositAddress/${input_field.value}`);
+// Add to MetaMask button
+metaMaskButton.addEventListener(`click`, async () => {
+    const [error, success] = await addNetwork();
+    if (error && !success) {
+        alert(error);
+    }
+    web3.enable().then(async () => {
+        // Continue to the next step
+        (document.querySelector(`#add-metamask`) as HTMLDivElement).style.display = `none`;
+        (document.querySelector(`#main`) as HTMLDivElement).style.display = `block`;
+
+        // Show the MetaMask address
+        //@ts-ignore
+        const checksummedAddress = Web3Utils.toChecksumAddress(web3.selectedAddress);
+        (document.querySelector(`#matic-address`) as HTMLSpanElement).innerText = `Your selected address: ${checksummedAddress}`;
+
+        // Get a deposit address
+        const response = await fetch(`${apiURL}/getDepositAddress/${checksummedAddress}`);
         const data = await response.json();
-
-        // Check if the address is valid
-        if (data[`message`][`addressMatic`] === input_field.value) {}
-
-        // Continue to step 2
-        (<HTMLElement>document.querySelector(`#stage1`)!).style.display = `none`;
-        (<HTMLElement>document.querySelector(`#stage2`)!).style.display = `block`;
-    } else {
-        alert(`Please enter a valid polygon address`);
-        return;
-    }
-});
-
-submitButton2?.addEventListener(`click`, async (event: Event) => {
-    const input_field = document.querySelector(`#stage2`)!.children[1] as HTMLInputElement;
-
-    if (input_field.value && input_field.value.length === 42) {
-        const validPolygonAddress: boolean = polygonAddressRegex.test(input_field.value.slice(2));
-    }
-
-    (<HTMLElement>document.querySelector(`#stage2`)!).style.display = `none`;
-    (<HTMLElement>document.querySelector(`#stage3`)!).style.display = `block`;
-});
-
-submitButton3?.addEventListener(`click`, async (event: Event) => {
-    const input_field = document.querySelector(`#stage3`)!.children[1] as HTMLInputElement;
-
-    if (input_field.value && input_field.value.length === 42) {
-        const validPolygonAddress: boolean = polygonAddressRegex.test(input_field.value.slice(2));
-    }
+        const message = JSON.parse(data.message);
+        const { node, signature } = data;
+        (document.querySelector(`#deposit-address`) as HTMLParagraphElement).innerText = `Your deposit address: ${message.depositAddress}`;
+    }).catch((error: any) => {
+        console.error(error);
+        alert(`An error has occured while enabling MetaMask`);
+    });
 });

@@ -5,25 +5,37 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>wBunkercoin Custodian</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.7.0/web3.min.js"
+        integrity="sha512-C63V0mFzwl8KV2fRz0QJNKX0d9877urOLSUq5WUq8nUOhDl69hKdGr9mAvl57k47GNjqEMAtiufsvDnk7xs8+w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://polygonscan.com/assets/js/custom/web3-utils.min.js"></script>
+    <script src="https://polygonscan.com/assets/js/custom/web3-eth.min.js"></script>
+    <script src="https://polygonscan.com/assets/js/custom/web3-providers-http.min.js"></script>
 </head>
 
 <body>
-    <div id="stage1">
-        <h1>Step 1:</h1>
-        <input type="text" id="maticaddress" placeholder="Your matic address"><br>
-        <button id="submit1">Submit</button>
+    <div id="add-metamask">
+        <a href="https://polygonscan.com/address/0x5BCda6E59262A96a599Ea938c9B679714c105Bba">
+            <h1>Our Polygon contract</h1>
+        </a>
+        <button id="button-add-metamask">Add to Metamask to continue</button>
     </div>
-    <div id="stage2" style="display: none;">
-        <h1>Step 2:</h1>
-        <button id="submit2">Submit</button>
-    </div>
-    <div id="stage3" style="display: none;">
-        <h1>Step 3:</h1>
-        <button id="submit3">Submit</button>
+    <div id="main" style="display: none;">
+        <span id="matic-address"></span>
+        <div id="wrap-div">
+            <h1>Wrap your Bunkercoins</h1>
+            <p id="deposit-address"></p>
+        </div>
+        <br><br>
+        <div id="unwrap-div">
+            <h1>Unwrap your Bunkercoins</h1>
+        </div>
     </div>
 
     <script src="main.js"></script>
+    <script src="addToMetaMask.js"></script>
 </body>
 
 </html>
