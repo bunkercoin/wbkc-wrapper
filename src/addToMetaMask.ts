@@ -3,7 +3,7 @@ var Web3Eth: any;
 var eth: any;
 var ethereum: any;
 
-const addNetwork = async () => {
+const addNetwork = async (): Promise<[string | undefined, boolean]> => {
     if (ethereum !== undefined) {
         eth = new Web3Eth(ethereum);
     } else if (web3 !== undefined) {
