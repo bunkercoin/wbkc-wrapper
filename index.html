@@ -13,29 +13,48 @@
     <script src="https://polygonscan.com/assets/js/custom/web3-utils.min.js"></script>
     <script src="https://polygonscan.com/assets/js/custom/web3-eth.min.js"></script>
     <script src="https://polygonscan.com/assets/js/custom/web3-providers-http.min.js"></script>
+
+    <style>
+        td,
+        th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+    </style>
 </head>
 
 <body>
-    <div id="add-metamask">
-        <a href="https://polygonscan.com/address/0x5BCda6E59262A96a599Ea938c9B679714c105Bba">
-            <h1>Our Polygon contract</h1>
-        </a>
-        <button id="button-add-metamask">Add to Metamask to continue</button>
+    <a href="https://polygonscan.com/address/0x5BCda6E59262A96a599Ea938c9B679714c105Bba">
+        <h1>Our Polygon contract</h1>
+    </a>
+    <span id="matic-address"></span>
+    <div id="wrap-div">
+        <h1>Wrap your Bunkercoins</h1>
+        <table>
+            <tr>
+                <th>Your deposit address</th>
+                <th>Unconfirmed</th>
+                <th>Confirmed</th>
+                <th>Minted</th>
+            </tr>
+            <tr>
+                <td id="wrap-deposit-address">Loading...</td>
+                <td id="wrap-unconfirmed">0</td>
+                <td id="wrap-confirmed">0</td>
+                <td id="wrap-minted">0</td>
+            </tr>
+        </table>
+        <p id="deposit-address"></p>
     </div>
-    <div id="main" style="display: none;">
-        <span id="matic-address"></span>
-        <div id="wrap-div">
-            <h1>Wrap your Bunkercoins</h1>
-            <p id="deposit-address"></p>
-        </div>
-        <br><br>
-        <div id="unwrap-div">
-            <h1>Unwrap your Bunkercoins</h1>
-        </div>
+    <br><br>
+    <div id="unwrap-div">
+        <h1>Unwrap your Bunkercoins</h1>
     </div>
 
-    <script src="main.js"></script>
+    <script src="definitions.js"></script>
     <script src="addToMetaMask.js"></script>
+    <script src="main.js"></script>
 </body>
 
 </html>
