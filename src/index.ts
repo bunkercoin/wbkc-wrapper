@@ -75,4 +75,13 @@ const submitButton3 = document.querySelector(`#button-emit`) as HTMLButtonElemen
     const message = JSON.parse(data.message);
     const { node, signature } = data;
     (document.querySelector(`#wrap-deposit-address`) as HTMLParagraphElement).innerText = message.depositAddress;
+
+    // Check every 30 seconds if the user desposited any confirmed funds
+    setInterval(async () => {
+        const confirmed_data = parseFloat((await (await fetch(`${apiURL}/getBalance/${checksummedAddress}`)).text()).slice(1).slice(0, -1));
+        console.log(confirmed_data);
+        if (confirmed_data !== parseFloat((document.querySelector(`#wrap-confirmed`) as HTMLParagraphElement).innerText)) {
+            (document.querySelector(`#wrap-confirmed`) as HTMLParagraphElement).innerText = confirmed_data.toString();
+        }
+    }, 30 * 1000);
 })();
