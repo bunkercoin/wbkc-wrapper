@@ -2,7 +2,7 @@
 const polygonAddressRegex: RegExp = /^[0-9a-zA-Z]{40,40}/g;
 const bunkercoinAddressRegex: RegExp = /^[0-9a-zA-Z]{33,33}/g;
 const apiURL: string = `https://wrap.bunkercoin.xyz/api/`;
-const minDeposit: number = 0.01;
+const minDeposit: number = 100;
 const minConfirmations: number = 60;
 
 // Buttons
@@ -31,7 +31,7 @@ const submitButton3 = document.querySelector(`#button-emit`) as HTMLButtonElemen
         const data = await response.json();
         const message = JSON.parse(data.message);
         const { node, signature } = data;
-        (document.querySelector(`#deposit-address`) as HTMLParagraphElement).innerText = `Your deposit address: ${message.depositAddress}`;
+        (document.querySelector(`#wrap-deposit-address`) as HTMLParagraphElement).innerText = message.depositAddress;
     }).catch((error: any) => {
         console.error(error);
         alert(`An error has occured while enabling MetaMask`);

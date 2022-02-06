@@ -13,6 +13,15 @@
     <script src="https://polygonscan.com/assets/js/custom/web3-utils.min.js"></script>
     <script src="https://polygonscan.com/assets/js/custom/web3-eth.min.js"></script>
     <script src="https://polygonscan.com/assets/js/custom/web3-providers-http.min.js"></script>
+
+    <style>
+        td,
+        th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+    </style>
 </head>
 
 <body>
@@ -26,6 +35,20 @@
         <span id="matic-address"></span>
         <div id="wrap-div">
             <h1>Wrap your Bunkercoins</h1>
+            <table>
+                <tr>
+                    <th>Your deposit address</th>
+                    <th>Unconfirmed</th>
+                    <th>Confirmed</th>
+                    <th>Minted</th>
+                </tr>
+                <tr>
+                    <td id="wrap-deposit-address">Loading...</td>
+                    <td id="wrap-unconfirmed">0</td>
+                    <td id="wrap-confirmed">0</td>
+                    <td id="wrap-minted">0</td>
+                </tr>
+            </table>
             <p id="deposit-address"></p>
         </div>
         <br><br>
