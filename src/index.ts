@@ -8,9 +8,9 @@ const minConfirmations: number = 60;
 const web3 = (window as any).ethereum;
 
 // I hate this but else typescript will complain
-let Web3Eth: any;
-let eth: any;
-let ethereum: any;
+var Web3Eth: any;
+var eth: any;
+var ethereum: any;
 
 const addToMetaMask = async (): Promise<[string | undefined, boolean]> => {
     if (ethereum !== undefined) {
