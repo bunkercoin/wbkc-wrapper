@@ -6,7 +6,7 @@
     "scripts": {
         "start": "(cd build; php -S 127.0.0.1:3000)",
         "build": "rm build -rf; tsc; cp -r src/public/* build; npm run minify",
-        "minify": "uglifyjs build/main.js -o build/main.js -cm"
+        "minify": "uglifyjs build/index.js -o build/index.js -cm"
     },
     "repository": {
         "type": "git",
