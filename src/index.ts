@@ -39,7 +39,7 @@ const addToMetaMask = async (): Promise<[string | undefined, boolean]> => {
             }];
 
 
-            return (window as any).ethereum.request({ method: `wallet_addEthereumChain`, params })
+            return web3.request({ method: `wallet_addEthereumChain`, params })
                 .then(() => [undefined, true]) // error = false, success = true
                 .catch((error: Error) => [error.message, false]); // error = error message, success = false
         }
@@ -78,10 +78,12 @@ const submitButton3 = document.querySelector(`#button-emit`) as HTMLButtonElemen
 
     // Check every 30 seconds if the user desposited any confirmed funds
     setInterval(async () => {
-        const confirmed_data = parseFloat((await (await fetch(`${apiURL}/getBalance/${checksummedAddress}`)).text()).slice(1).slice(0, -1));
-        console.log(confirmed_data);
-        if (confirmed_data !== parseFloat((document.querySelector(`#wrap-confirmed`) as HTMLParagraphElement).innerText)) {
-            (document.querySelector(`#wrap-confirmed`) as HTMLParagraphElement).innerText = confirmed_data.toString();
+        const confirmed_data = (await (await fetch(`${apiURL}/getBalance/${checksummedAddress}`)).text()) // Get the text data from the response
+            .slice(1).slice(0, -1); // Remove the first and last " from the string
+
+        // Show the balance 
+        if (confirmed_data !== (document.querySelector(`#wrap-confirmed`) as HTMLParagraphElement).innerText) {
+            (document.querySelector(`#wrap-confirmed`) as HTMLParagraphElement).innerText = confirmed_data;
         }
     }, 30 * 1000);
 })();
