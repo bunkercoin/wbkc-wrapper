@@ -1,13 +1,15 @@
 // Config  variables
-const polygonAddressRegex: RegExp = /^[0-9a-zA-Z]{40,40}/g;
-const bunkercoinAddressRegex: RegExp = /^[0-9a-zA-Z]{33,33}/g;
-const apiURL: string = `https://wrap.bunkercoin.xyz/api/`;
-const minDeposit: number = 100;
-const minConfirmations: number = 60;
+const config = {
+    polygonAddressRegex: /^[0-9a-zA-Z]{40,40}/g,
+    bunkercoinAddressRegex: /^[0-9a-zA-Z]{33,33}/g,
+    minDeposit: 10000,
+    apiURL: `https://wrap.bunkercoin.xyz/api/`
+};
 
+// Define web3
 const web3 = (window as any).ethereum;
 
-// I hate this but else typescript will complain
+// I hate this but else TypeScript will complain
 var Web3Eth: any;
 var eth: any;
 var ethereum: any;
@@ -38,7 +40,6 @@ const addToMetaMask = async (): Promise<[string | undefined, boolean]> => {
                 blockExplorerUrls: [`https://polygonscan.com/`]
             }];
 
-
             return web3.request({ method: `wallet_addEthereumChain`, params })
                 .then(() => [undefined, true]) // error = false, success = true
                 .catch((error: Error) => [error.message, false]); // error = error message, success = false
@@ -67,23 +68,34 @@ const submitButton3 = document.querySelector(`#button-emit`) as HTMLButtonElemen
     // Show the MetaMask address
     //@ts-ignore - to ignore Web3Utils name to found
     const checksummedAddress = Web3Utils.toChecksumAddress(web3.selectedAddress);
-    (document.querySelector(`#matic-address`) as HTMLSpanElement).innerText = `Your selected address: ${checksummedAddress}`;
+    (document.querySelector(`#matic-address`) as HTMLSpanElement).innerText = checksummedAddress;
 
     // Get a deposit address
-    const response = await fetch(`${apiURL}/getDepositAddress/${checksummedAddress}`);
-    const data = await response.json();
-    const message = JSON.parse(data.message);
-    const { node, signature } = data;
+    const data_deposit = await (await fetch(`${config.apiURL}/getDepositAddress/${checksummedAddress}`)).json();
+    const message = JSON.parse(data_deposit.message);
+    const { node, signature } = data_deposit; // TODO: check signature
     (document.querySelector(`#wrap-deposit-address`) as HTMLParagraphElement).innerText = message.depositAddress;
 
     // Check every 30 seconds if the user desposited any confirmed funds
     setInterval(async () => {
-        const confirmed_data = (await (await fetch(`${apiURL}/getBalance/${checksummedAddress}`)).text()) // Get the text data from the response
+        const confirmed_data = (await (await fetch(`${config.apiURL}/getBalance/${checksummedAddress}`)).text()) // Get the text data from the response
             .slice(1).slice(0, -1); // Remove the first and last " from the string
 
         // Show the balance 
         if (confirmed_data !== (document.querySelector(`#wrap-confirmed`) as HTMLParagraphElement).innerText) {
             (document.querySelector(`#wrap-confirmed`) as HTMLParagraphElement).innerText = confirmed_data;
+
+            // Show the emit button if the user has deposited something
+            if (parseFloat(confirmed_data) > config.minDeposit) {
+                (document.querySelector("#button-emit") as HTMLButtonElement).style.display = `block`;
+            }
         }
     }, 30 * 1000);
+
+    // If the user clicks the emit button
+    (document.querySelector("#button-emit") as HTMLButtonElement).addEventListener("click", async (event) => {
+        // Get smart contract values
+        const data_contract = await (await fetch(`${config.apiURL}/emitwBKC/${checksummedAddress}`)).json();
+        console.log(data_contract);
+    });
 })();
