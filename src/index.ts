@@ -76,7 +76,20 @@ const submitButton3 = document.querySelector(`#button-emit`) as HTMLButtonElemen
     const { node, signature } = data_deposit; // TODO: check signature
     (document.querySelector(`#wrap-deposit-address`) as HTMLParagraphElement).innerText = message.depositAddress;
 
-    // Check every 30 seconds if the user desposited any confirmed funds
+    const confirmed_data = (await (await fetch(`${config.apiURL}/getBalance/${checksummedAddress}`)).text()) // Get the text data from the response
+        .slice(1).slice(0, -1); // Remove the first and last " from the string
+
+    // Show the balance 
+    if (confirmed_data !== (document.querySelector(`#wrap-confirmed`) as HTMLParagraphElement).innerText) {
+        (document.querySelector(`#wrap-confirmed`) as HTMLParagraphElement).innerText = confirmed_data;
+
+        // Show the emit button if the user has deposited something
+        if (parseFloat(confirmed_data) > config.minDeposit) {
+            (document.querySelector("#button-emit") as HTMLButtonElement).style.display = `block`;
+        }
+    }
+
+    // Check every 2.5 minutes if the user desposited any confirmed funds (2.5 min to avoid 429)
     setInterval(async () => {
         const confirmed_data = (await (await fetch(`${config.apiURL}/getBalance/${checksummedAddress}`)).text()) // Get the text data from the response
             .slice(1).slice(0, -1); // Remove the first and last " from the string
@@ -90,7 +103,7 @@ const submitButton3 = document.querySelector(`#button-emit`) as HTMLButtonElemen
                 (document.querySelector("#button-emit") as HTMLButtonElement).style.display = `block`;
             }
         }
-    }, 30 * 1000);
+    }, 150 * 1000);
 
     // If the user clicks the emit button
     (document.querySelector("#button-emit") as HTMLButtonElement).addEventListener("click", async (event) => {
