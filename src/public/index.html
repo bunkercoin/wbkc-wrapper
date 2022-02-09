@@ -18,38 +18,40 @@
 </head>
 
 <body>
- <center>
-    <a href="https://polygonscan.com/address/0x5BCda6E59262A96a599Ea938c9B679714c105Bba">
-        <h1>Our Polygon contract</h1>
-    </a>
-    <span id="matic-address"></span>
-    <div id="wrap-div">
-        <h1>Wrap your Bunkercoins</h1>
-        <table>
-            <tr>
-                <th>Your deposit address</th>
-                <th>Confirmed</th>
-                <th>Minted</th>
-                <th>Action</th>
-            </tr>
-            <tr>
-                <td id="wrap-deposit-address">Loading...</td>
-                <td id="wrap-confirmed">0</td>
-                <td id="wrap-minted">0</td>
-                <td id="wrap-action"></td>
-            </tr>
-        </table>
-        <p id="deposit-address"></p>
-    </div>
-    <br><br>
-    <div id="unwrap-div">
-        <h1>Unwrap your Bunkercoins</h1>
-    </div>
+    <center>
+        Your selected address: <span id="matic-address"></span>
+        <div id="wrap-div">
+            <h1>Wrap your Bunkercoins</h1>
+            <table>
+                <tr>
+                    <th>Your deposit address</th>
+                    <th>Confirmed</th>
+                    <th>Minted</th>
+                    <th>Action</th>
+                </tr>
+                <tr>
+                    <td id="wrap-deposit-address">Loading...</td>
+                    <td id="wrap-confirmed">0</td>
+                    <td id="wrap-minted">0</td>
+                    <td id="wrap-action" style="display: none;"><button id="button-withdraw">Emit</button></td>
+                </tr>
+            </table>
+            <p id="deposit-address"></p>
+        </div>
+        <br><br>
+        <div id="unwrap-div">
+            <h1>Unwrap your Bunkercoins</h1>
+        </div>
 
-    <footer> <small>&copy; Copyright 2022, The Bunkercoin Project</small> </footer> 
+        <footer><small>
+            &copy; The Bunkercoin Project - 2022<br>
+            <a href="https://polygonscan.com/address/0x5BCda6E59262A96a599Ea938c9B679714c105Bba">
+                Our Polygon contract
+            </a>
+        </small></footer>
 
-    <script src="index.js"></script>
- </center>
+        <script src="index.js"></script>
+    </center>
 </body>
 
 </html>
