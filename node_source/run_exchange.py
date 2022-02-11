@@ -161,7 +161,7 @@ def emitwBKC(addressMatic):
 		rpc_connection.sendfrom(addressMatic, NODE_ADDRESS, coins+TAX-0.02)
 	
 	#log in the DB
-	data = (addressMatic,coinsWei,nonce.hex(),int(time.time()),to_32byte_hex(signed_message.r),to_32byte_hex(signed_message.s), signed_message.v)
+	data = (addressMatic,str(coinsWei),nonce.hex(),int(time.time()),to_32byte_hex(signed_message.r),to_32byte_hex(signed_message.s), signed_message.v)
 	db_execute("INSERT INTO promise VALUES (?,?,?,?,?,?,?)",data)
 
 	#give out the signed promisse
