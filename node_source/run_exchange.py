@@ -116,6 +116,19 @@ def getBalance(addressMatic):
 	total = rpc_connection.getbalance(addressMatic, 60)
 	
 	return json.dumps(total)
+	
+	
+@api.route('/getBalanceUnconfirmed/<string:addressMatic>', methods=['GET'])
+@cache.memoize(60)	
+def getBalanceUnconfirmed(addressMatic):
+	
+	#validate input
+	validateMaticAddress(addressMatic)
+	
+	rpc_connection = AuthServiceProxy(RPC, timeout = 20)
+	total = rpc_connection.getbalance(addressMatic, 1)
+	
+	return json.dumps(total)
 
 
 @api.route('/getPromises/<string:addressMatic>', methods=['GET'])
