@@ -1,7 +1,7 @@
 // Config  variables
 const config = {
-    polygonAddressRegex: /^[0-9a-zA-Z]{40,40}/g,
-    bunkercoinAddressRegex: /^[0-9a-zA-Z]{33,33}/g,
+    polygonAddressRegex: /^[0][x][0-9a-zA-Z]{40}$/,
+    bunkercoinAddressRegex: /^[B][a-zA-Z0-9]{33}$/,
     minDeposit: 10000,
     apiURL: `https://wrap.bunkercoin.xyz/api/`
 };
