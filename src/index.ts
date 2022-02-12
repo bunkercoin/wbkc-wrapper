@@ -89,7 +89,7 @@ const submitButton3 = document.querySelector(`#button-emit`) as HTMLButtonElemen
         }
     }
 
-    // Check every 2.5 minutes if the user desposited any confirmed funds (2.5 min to avoid 429)
+    // Check every 2.5 minutes if the user desposited any (un)confirmed funds (2.5 min to avoid 429)
     setInterval(async () => {
         const confirmed_data = (await (await fetch(`${config.apiURL}/getBalance/${checksummedAddress}`)).text()) // Get the text data from the response
             .slice(1).slice(0, -1); // Remove the first and last " from the string
@@ -102,6 +102,14 @@ const submitButton3 = document.querySelector(`#button-emit`) as HTMLButtonElemen
             if (parseFloat(confirmed_data) > config.minDeposit) {
                 (document.querySelector("#button-emit") as HTMLButtonElement).style.display = `block`;
             }
+        }
+
+        const unconfirmed_data = (await (await fetch(`${config.apiURL}/getBalance/${checksummedAddress}`)).text()) // Get the text data from the response
+            .slice(1).slice(0, -1); // Remove the first and last " from the string
+
+        // Show the balance 
+        if (unconfirmed_data !== (document.querySelector(`#wrap-unconfirmed`) as HTMLParagraphElement).innerText) {
+            (document.querySelector(`#wrap-unconfirmed`) as HTMLParagraphElement).innerText = unconfirmed_data;
         }
     }, 150 * 1000);
 
