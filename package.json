@@ -27,6 +27,6 @@
     "homepage": "https://github.com/bunkercoin/wbkc-wrapper#readme",
     "dependencies": {
         "typescript": "^4.5.5",
-        "uglify-js": "^3.15.0"
+        "uglify-js": "^3.15.1"
     }
 }
