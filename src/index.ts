@@ -78,7 +78,7 @@ const submitButton3 = document.querySelector(`#button-emit`) as HTMLButtonElemen
     
     // Verify the signature
     const verified = await (await fetch(`${config.explorerURL}/?action=verify&verify_address=${node}&verify_signature=${signature}&verify_message=${data_deposit.message}`)).json();
-    if (verified.success && !verified.result) {
+    if (verified.success && verified.result === false) {
         alert(`The signature is invalid.`);
         return;
     }
