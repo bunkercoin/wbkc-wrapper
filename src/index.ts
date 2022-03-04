@@ -1,5 +1,3 @@
-import "./main.css";
-
 // Config  variables
 const config = {
     polygonAddressRegex: /^[0][x][0-9a-zA-Z]{40}$/,
@@ -45,7 +43,9 @@ const addToMetaMask = async (): Promise<[string | undefined, boolean]> => {
     }
 };
 
-(async () => {
+const addToMetaMaskButton = document.querySelector(`#button-add-to-metamask`) as HTMLButtonElement;
+
+addToMetaMaskButton.addEventListener(`click`, async () => {
     // Add the Polygon network and enable MetaMask
     const [error, success] = await addToMetaMask();
     if (error && !success) {
@@ -59,6 +59,10 @@ const addToMetaMask = async (): Promise<[string | undefined, boolean]> => {
     //@ts-ignore - to ignore Web3Utils name not found
     const checksummedAddress = Web3Utils.toChecksumAddress(web3.selectedAddress);
     (document.querySelector(`#matic-address`) as HTMLSpanElement).innerText = checksummedAddress;
+
+    // Show the main screen
+    (document.querySelector(`#noMetamask`) as HTMLDivElement).style.display = `none`;
+    (document.querySelector(`#onceMetamask`) as HTMLDivElement).style.display = `block`;
 
     // Get a deposit address
     const data_deposit = await (
@@ -96,7 +100,7 @@ const addToMetaMask = async (): Promise<[string | undefined, boolean]> => {
 
         // Show the emit button if the user has deposited something
         if (parseFloat(confirmed_data) > config.minDeposit) {
-            (document.querySelector("#button-emit") as HTMLButtonElement).style.display = `block`;
+            (document.querySelector(`#button-emit`) as HTMLButtonElement).style.display = `block`;
         }
     }
 
@@ -119,7 +123,7 @@ const addToMetaMask = async (): Promise<[string | undefined, boolean]> => {
             // Show the emit button if the user has deposited something
             if (parseFloat(confirmed_data) > config.minDeposit) {
                 (
-                    document.querySelector("#button-emit") as HTMLButtonElement
+                    document.querySelector(`#button-emit`) as HTMLButtonElement
                 ).style.display = `block`;
             }
         }
@@ -143,8 +147,8 @@ const addToMetaMask = async (): Promise<[string | undefined, boolean]> => {
     }, 300 * 1000);
 
     // If the user clicks the emit button
-    (document.querySelector("#button-emit") as HTMLButtonElement).addEventListener(
-        "click",
+    (document.querySelector(`#button-emit`) as HTMLButtonElement).addEventListener(
+        `click`,
         async () => {
             // Get smart contract values
             const data_contract = await (
@@ -153,4 +157,4 @@ const addToMetaMask = async (): Promise<[string | undefined, boolean]> => {
             console.log(data_contract);
         },
     );
-})();
+});

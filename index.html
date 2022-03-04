@@ -9,15 +9,26 @@
     <title>wBunkercoin Custodian</title>
 
     <!-- JavaScript + CSS -->
+    <link rel="stylesheet" href="/src/main.css">
     <script src="https://polygonscan.com/assets/js/custom/web3-utils.min.js"></script>
     <script src="https://polygonscan.com/assets/js/custom/web3-eth.min.js"></script>
     <script type="module" src="/src/index.ts"></script>
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/assets/favicon.png" sizes="256x256" type="image/x-icon">
 </head>
 
-<body class="bg-bunker-green font-comic">
-    <div class="bg-bunker-white center p-8 rounded-3xl">
-        <div id="noMetamask"></div>
-        <div id="onceMetamask">
+<body class="font-comic">
+    <header class="bg-bunker-green text-bunker-white py-2">
+        <span class="ml-4"><img src="/assets/favicon.png" alt="The Bunkercoin™ logo" class="inline-block w-10 mb-3">&nbsp;<span class="text-4xl">wBunkercoin Custodian</span></span>
+        <span class="float-right mr-4 text-2xl underline mt-2 font-semibold"><a href="//bunkercoin.xyz" target="_blank" rel="noopener noreferrer">Visit Bunkercoin</a></span>
+        <span class="float-right mr-4 text-2xl underline mt-2 font-semibold"><a href="//polygonscan.com/address/0x5BCda6E59262A96a599Ea938c9B679714c105Bba" target="_blank" rel="noopener noreferrer">Polygon contract</a></span>
+    </header>
+    <main class="p-8 rounded-3xl">
+        <div id="noMetamask" class="text-center">
+            <button class="border-2 border-bunker-black rounded-lg px-4 py-2" id="button-add-to-metamask"><img src="/assets/metamask.svg" alt="The MetaMask fox" class="inline-block icon"> Connect to MetaMask</button>
+        </div>
+        <div id="onceMetamask" class="hidden">
             <h1 class="text-center text-2xl">Wrap your Bunkercoins</h1><br>
             <table class="flex justify-center">
                 <tr>
@@ -42,17 +53,10 @@
             <p>Cock and ball torture</p>
         </div>
         <br>
-        <footer>
-            <small>
-                &copy; The Bunkercoin Project - 2022<br>
-                <a href="https://polygonscan.com/address/0x5BCda6E59262A96a599Ea938c9B679714c105Bba">
-                    Our Polygon contract
-                </a>
-            </small>
-        </footer>
-    </div>
-
-
+    </main>
+    <footer class="bg-bunker-black py-3 text-center text-bunker-white text-lg">
+        Copyright © The Bunkercoin Project - 2022<br>
+    </footer>
 </body>
 
 </html>
