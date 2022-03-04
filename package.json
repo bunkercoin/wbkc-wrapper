@@ -4,9 +4,9 @@
     "description": "Front end for the Bunkercoin wrapper",
     "main": "index.js",
     "scripts": {
-        "start": "(cd build; php -S 127.0.0.1:3000)",
-        "build": "rm build -rf; tsc; cp -r src/public/* build; npm run minify",
-        "minify": "uglifyjs build/index.js -o build/index.js -cm"
+        "dev": "vite",
+        "build": "tsc && vite build",
+        "preview": "vite preview"
     },
     "repository": {
         "type": "git",
@@ -26,7 +26,11 @@
     },
     "homepage": "https://github.com/bunkercoin/wbkc-wrapper#readme",
     "dependencies": {
-        "typescript": "^4.5.5",
-        "uglify-js": "^3.15.2"
+        "autoprefixer": "^10.4.2",
+        "postcss": "^8.4.7",
+        "prettier": "^2.5.1",
+        "tailwindcss": "^3.0.23",
+        "typescript": "^4.6.2",
+        "vite": "^2.8.6"
     }
 }

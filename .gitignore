@@ -1,5 +1,5 @@
-# Node.js bloat 😄
-node_modules/
+# Node.js bloat
+node_modules
 
 # Build files
-build/
+dist

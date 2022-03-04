@@ -31,10 +31,10 @@ jobs:
       with:
         name: wbkc-wrapper-website-${{ github.sha }}
         path: |
-          build/
+          dist/
 
     - name: Upload build files to the gh-pages branch
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./build
+        publish_dir: ./dist

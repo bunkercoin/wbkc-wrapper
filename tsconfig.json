@@ -1,19 +1,27 @@
 {
     "compilerOptions": {
         "target": "ESNEXT",
+        "module": "ESNEXT",
+        "lib": ["ESNEXT", "DOM"],
+        "moduleResolution": "Node",
         "strict": true,
-        "outDir": "build",
-        "noImplicitAny": true,
-        "removeComments": true,
-        "preserveConstEnums": true,
-        "allowSyntheticDefaultImports": true,
-        "forceConsistentCasingInFileNames": true,
+        "sourceMap": true,
+        "resolveJsonModule": true,
         "esModuleInterop": true,
+        "noEmit": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "noImplicitAny": true,
+        "strictNullChecks": true,
+        "strictFunctionTypes": true,
+
     },
     "include": [
-        "src/**/*"
+        "src/**/*",
     ],
     "exclude": [
-        "node_modules"
-    ]
+        "node_modules",
+    ],
 }

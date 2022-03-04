@@ -2,24 +2,24 @@
 <html lang="en">
 
 <head>
+    <!-- Browser standards -->
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>wBunkercoin Custodian</title>
 
+    <!-- JavaScript + CSS -->
     <script src="https://polygonscan.com/assets/js/custom/web3-utils.min.js"></script>
     <script src="https://polygonscan.com/assets/js/custom/web3-eth.min.js"></script>
-    <script src="https://polygonscan.com/assets/js/custom/web3-providers-http.min.js"></script>
-
-    <link rel="stylesheet" href="/main.css">
+    <script type="module" src="/src/index.ts"></script>
 </head>
 
-<body>
-    <center>
-        Your selected address: <span id="matic-address"></span>
-        <div id="wrap-div">
-            <h1>Wrap your Bunkercoins</h1>
-            <table>
+<body class="bg-bunker-green font-comic">
+    <div class="bg-bunker-white center p-8 rounded-3xl">
+        <div id="noMetamask"></div>
+        <div id="onceMetamask">
+            <h1 class="text-center text-2xl">Wrap your Bunkercoins</h1><br>
+            <table class="flex justify-center">
                 <tr>
                     <th>Your deposit address</th>
                     <th>Unconfirmed</th>
@@ -36,12 +36,12 @@
                 </tr>
             </table>
             <p id="deposit-address"></p>
+            <br>
+            <h2 class="text-xl">Your selected address: <span id="matic-address">Loading...</span></h2><br><br>
+            <h1 class="text-center text-2xl">Unwrap your Bunkercoins</h1>
+            <p>Cock and ball torture</p>
         </div>
-        <br><br>
-        <div id="unwrap-div">
-            <h1>Unwrap your Bunkercoins</h1>
-        </div>
-
+        <br>
         <footer>
             <small>
                 &copy; The Bunkercoin Project - 2022<br>
@@ -50,9 +50,9 @@
                 </a>
             </small>
         </footer>
+    </div>
 
-        <script src="index.js"></script>
-    </center>
+
 </body>
 
 </html>
