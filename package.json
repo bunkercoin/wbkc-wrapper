@@ -19,8 +19,8 @@
         "typescript",
         "tsc"
     ],
-    "author": "Bunkercoin Project",
-    "license": "MIT",
+    "author": "The Bunkercoin Project",
+    "license": "GPL-3.0",
     "bugs": {
         "url": "https://github.com/bunkercoin/wbkc-wrapper/issues"
     },
