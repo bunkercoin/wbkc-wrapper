@@ -6,7 +6,7 @@ module.exports = {
     theme: {
         extend: {
             fontFamily: {
-                comic: ["Comic Sans MS"],
+                comic: ["Comic Sans MS", "Comic Neue"],
             },
             colors: {
                 bunker: {

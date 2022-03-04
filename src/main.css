@@ -1,6 +1,11 @@
 @tailwind base;
-@tailwind components;
 @tailwind utilities;
+
+@font-face {
+    font-family: "Comic Neue";
+    src: url("/assets/comic-neue/ComicNeue-Regular.woff2") format("woff2"),
+        url("/assets/comic-neue/ComicNeue-Regular.woff") format("woff");
+}
 
 .center {
     position: absolute;
