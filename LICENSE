@@ -1,3 +1,8 @@
+assets/**/*:
+  Copyright (C) 2022 The Bunkercoin Project, licensed under CC-BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/), except if specified elsewhere in either the file itself, or in the LICENSE file in its folder
+
+src/**/* + index.html:
+
                     GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
 
