@@ -7,11 +7,12 @@
         url("/assets/comic-neue/ComicNeue-Regular.woff") format("woff");
 }
 
-.center {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+main {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: 1fr;
+    column-gap: 0px;
+    row-gap: 0px;
 }
 
 /* Make tables look epic */
@@ -27,5 +28,4 @@ th {
     width: 1em;
     margin: 0 0.05em 0 0.1em;
     vertical-align: -0.1em;
-    fill: currentColor;
 }

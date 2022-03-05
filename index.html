@@ -6,13 +6,17 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>wBunkercoin Custodian</title>
+    <title>wBKC Custodian</title>
 
     <!-- JavaScript + CSS -->
     <link rel="stylesheet" href="/src/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer">
     <script src="https://polygonscan.com/assets/js/custom/web3-utils.min.js"></script>
     <script src="https://polygonscan.com/assets/js/custom/web3-eth.min.js"></script>
-    <script type="module" src="/src/index.ts"></script>
+    <script type="module" src="/src/wrapping.ts"></script>
+    <script type="module" src="/src/status.ts"></script>
 
     <!-- Favicon -->
     <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
@@ -21,39 +25,54 @@
 
 <body class="font-comic">
     <header class="bg-bunker-green text-bunker-white py-2">
-        <span class="ml-4"><img src="/assets/favicon.png" alt="The Bunkercoin™ logo" class="inline-block w-10 mb-3">&nbsp;<span class="text-4xl">wBunkercoin Custodian</span></span>
-        <span class="float-right mr-4 text-2xl underline mt-2 font-semibold"><a href="//bunkercoin.xyz" target="_blank" rel="noopener noreferrer">Visit Bunkercoin</a></span>
-        <span class="float-right mr-4 text-2xl underline mt-2 font-semibold"><a href="//polygonscan.com/address/0x5BCda6E59262A96a599Ea938c9B679714c105Bba" target="_blank" rel="noopener noreferrer">Polygon contract</a></span>
+        <span class="ml-4 mt-6 text-4xl"><img src="/assets/favicon.svg" alt="The Bunkercoin logo"
+                class="inline-block w-10 mb-1"> wBKC Custodian
+        </span>
+        <span class="float-right mr-4 text-2xl underline mt-2 font-semibold">
+            <a href="//bunkercoin.xyz" target="_blank" rel="noopener noreferrer">Visit Bunkercoin</a>
+        </span>
+        <span class="float-right mr-4 text-2xl underline mt-2 font-semibold">
+            <a href="//polygonscan.com/address/0x5BCda6E59262A96a599Ea938c9B679714c105Bba" target="_blank"
+                rel="noopener noreferrer">Polygon contract</a>
+        </span>
     </header>
-    <main class="p-8 rounded-3xl">
-        <div id="noMetamask" class="text-center">
-            <button class="border-2 border-bunker-black rounded-lg px-4 py-2" id="button-add-to-metamask"><img src="/assets/metamask.svg" alt="The MetaMask fox" class="inline-block icon"> Connect to MetaMask</button>
-        </div>
-        <div id="onceMetamask" class="hidden">
-            <h1 class="text-center text-2xl">Wrap your Bunkercoins</h1><br>
-            <table class="flex justify-center">
-                <tr>
-                    <th>Your deposit address</th>
-                    <th>Unconfirmed</th>
-                    <th>Confirmed</th>
-                    <th>Minted</th>
-                    <th>Action</th>
-                </tr>
-                <tr>
-                    <td id="wrap-deposit-address">Loading...</td>
-                    <td id="wrap-unconfirmed">0</td>
-                    <td id="wrap-confirmed">0</td>
-                    <td id="wrap-minted">0</td>
-                    <td id="wrap-action"><button id="button-emit" style="display: none;">Emit</button></td>
-                </tr>
-            </table>
-            <p id="deposit-address"></p>
+    <br>
+    <main class="p-8">
+        <div class="text-center">
+            <h1 class="text-center text-3xl">Wrap and unwrap your Bunkercoins</h1><br>
+            <div id="noMetamask" class="text-center">
+                <button class="border-2 border-bunker-black rounded-lg px-4 py-2" id="button-add-to-metamask">
+                    <img src="/assets/metamask.svg" alt="The MetaMask logo" class="inline-block icon">
+                    Connect to MetaMask
+                </button>
+            </div>
+            <div id="onceMetamask" class="hidden">
+                <h2 class="text-xl border-2 border-bunker-black rounded-lg px-4 py-2">Address: <span id="matic-address">Loading...</span></h2><br>
+                <span class="text-2xl">Wrap</span><br>
+                <table class="flex justify-center mt-3">
+                    <tr>
+                        <th>Your deposit address</th>
+                        <th>Unconfirmed</th>
+                        <th>Confirmed</th>
+                        <th>Minted</th>
+                        <th>Action</th>
+                    </tr>
+                    <tr>
+                        <td id="wrap-deposit-address">Loading...</td>
+                        <td id="wrap-unconfirmed">0</td>
+                        <td id="wrap-confirmed">0</td>
+                        <td id="wrap-minted">0</td>
+                        <td id="wrap-action"><button id="button-emit" style="display: none;">Emit</button></td>
+                    </tr>
+                </table><br><br>
+                <span class="text-2xl">Unwrap</span><br>
+                soonish
+            </div>
             <br>
-            <h2 class="text-xl">Your selected address: <span id="matic-address">Loading...</span></h2><br><br>
-            <h1 class="text-center text-2xl">Unwrap your Bunkercoins</h1>
-            <p>Cock and ball torture</p>
         </div>
-        <br>
+        <div class="text-center">
+            <h1 class="text-3xl">Custodian status</h1>
+        </div>
     </main>
     <footer class="bg-bunker-black py-3 text-center text-bunker-white text-lg">
         Copyright © The Bunkercoin Project - 2022<br>
