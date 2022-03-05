@@ -23,11 +23,11 @@ limiter = Limiter(
 )
 
 #my node details
-BKC_PRIVATE_KEY = 'QUpT6iQkuPi64bqSG2VafNz3Wkaz39dnSkpKytabuNrgm4gbBvVn'
-NODE_ADDRESS = 'BTdSU3Dh5hm17EtDfxPCd9wdzFMqayfNzk'
+BKC_PRIVATE_KEY = ''
+NODE_ADDRESS = ''
 NODE_ID = 0
 NREQUIRED = 1 #for funds unlocking
-MATIC_PRIVATE_KEY = '4d9e599423f0a37115c35f1dc4b749a4754545e4172d3901260a484512eee4d6'
+MATIC_PRIVATE_KEY = ''
 
 #all the authority node address
 PEER_NODES = ["BTdSU3Dh5hm17EtDfxPCd9wdzFMqayfNzk"]
