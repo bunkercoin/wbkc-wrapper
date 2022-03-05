@@ -28,10 +28,10 @@ limiter = Limiter(
 cache = Cache(api,config={'CACHE_TYPE': 'SimpleCache', 'CACHE_DEFAULT_TIMEOUT': 60})
 
 #my node details
-BKC_PRIVATE_KEY = 'QUpT6iQkuPi64bqSG2VafNz3Wkaz39dnSkpKytabuNrgm4gbBvVn'
-NODE_ADDRESS = 'BTdSU3Dh5hm17EtDfxPCd9wdzFMqayfNzk'
+BKC_PRIVATE_KEY = ''
+NODE_ADDRESS = ''
 
-MATIC_PRIVATE_KEY = '4d9e599423f0a37115c35f1dc4b749a4754545e4172d3901260a484512eee4d6'
+MATIC_PRIVATE_KEY = ''
 
 TAX = 50 # BKC per transaction (0.02 network cost)
 
