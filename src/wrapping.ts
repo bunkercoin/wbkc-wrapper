@@ -44,7 +44,6 @@ const addToMetaMask = async (): Promise<[string | undefined, boolean]> => {
 };
 
 const addToMetaMaskButton = document.querySelector(`#button-add-to-metamask`) as HTMLButtonElement;
-
 addToMetaMaskButton.addEventListener(`click`, async () => {
     // Add the Polygon network and enable MetaMask
     const [error, success] = await addToMetaMask();
@@ -55,8 +54,7 @@ addToMetaMaskButton.addEventListener(`click`, async () => {
         alert(`An error has occured while enabling MetaMask: ${error}`);
     });
 
-    // Show the MetaMask address
-    //@ts-ignore - to ignore Web3Utils name not found
+    // @ts-ignore - Show the MetaMask address
     const checksummedAddress = Web3Utils.toChecksumAddress(web3.selectedAddress);
     (document.querySelector(`#matic-address`) as HTMLSpanElement).innerText = checksummedAddress;
 
@@ -157,4 +155,34 @@ addToMetaMaskButton.addEventListener(`click`, async () => {
             console.log(data_contract);
         },
     );
+});
+
+const addTokenButton = document.querySelector(`#button-add-token`) as HTMLButtonElement;
+addTokenButton.addEventListener(`click`, async () => {
+    await web3.request({
+        method: `wallet_watchAsset`,
+        params: {
+            type: `ERC20`,
+            options: {
+                address: `0x5BCda6E59262A96a599Ea938c9B679714c105Bba`,
+                symbol: `wBKC`,
+                decimals: 18,
+            },
+        },
+    });
+});
+
+const addTokenButton2 = document.querySelector(`#button-add-token-2`) as HTMLButtonElement;
+addTokenButton2.addEventListener(`click`, async () => {
+    await web3.request({
+        method: `wallet_watchAsset`,
+        params: {
+            type: `ERC20`,
+            options: {
+                address: `0x5BCda6E59262A96a599Ea938c9B679714c105Bba`,
+                symbol: `wBKC`,
+                decimals: 18,
+            },
+        },
+    });
 });
