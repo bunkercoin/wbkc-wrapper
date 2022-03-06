@@ -10,6 +10,16 @@ const config = {
 // Define web3
 const web3 = (window as any).ethereum;
 
+const rpc = async (method: string, params: any): Promise<[string | undefined, boolean]> => {
+    return web3
+        .request({
+            method: method,
+            params: params,
+        })
+        .then(() => [undefined, true]) // error = false, success = true
+        .catch((error: Error) => [error.message, false]); // error = error message, success = false
+};
+
 const addToMetaMask = async (): Promise<[string | undefined, boolean]> => {
     // @ts-ignore
     const eth = new Web3Eth(web3);
@@ -19,7 +29,7 @@ const addToMetaMask = async (): Promise<[string | undefined, boolean]> => {
         if (netID == 137) {
             return [undefined, true];
         } else {
-            const params = [
+            return await rpc(`wallet_addEthereumChain`, [
                 {
                     chainId: `0x89`,
                     chainName: `Matic Mainnet`,
@@ -31,12 +41,7 @@ const addToMetaMask = async (): Promise<[string | undefined, boolean]> => {
                     rpcUrls: [`https://polygon-rpc.com/`],
                     blockExplorerUrls: [`https://polygonscan.com/`],
                 },
-            ];
-
-            return web3
-                .request({ method: `wallet_addEthereumChain`, params })
-                .then(() => [undefined, true]) // error = false, success = true
-                .catch((error: Error) => [error.message, false]); // error = error message, success = false
+            ]);
         }
     } else {
         return [`Unable to locate MetaMask`, false];
@@ -159,30 +164,24 @@ addToMetaMaskButton.addEventListener(`click`, async () => {
 
 const addTokenButton = document.querySelector(`#button-add-token`) as HTMLButtonElement;
 addTokenButton.addEventListener(`click`, async () => {
-    await web3.request({
-        method: `wallet_watchAsset`,
-        params: {
-            type: `ERC20`,
-            options: {
-                address: `0x5BCda6E59262A96a599Ea938c9B679714c105Bba`,
-                symbol: `wBKC`,
-                decimals: 18,
-            },
+    await rpc(`wallet_watchAsset`, {
+        type: `ERC20`,
+        options: {
+            address: `0x5BCda6E59262A96a599Ea938c9B679714c105Bba`,
+            symbol: `wBKC`,
+            decimals: 18,
         },
     });
 });
 
 const addTokenButton2 = document.querySelector(`#button-add-token-2`) as HTMLButtonElement;
 addTokenButton2.addEventListener(`click`, async () => {
-    await web3.request({
-        method: `wallet_watchAsset`,
-        params: {
-            type: `ERC20`,
-            options: {
-                address: `0x5BCda6E59262A96a599Ea938c9B679714c105Bba`,
-                symbol: `wBKC`,
-                decimals: 18,
-            },
+    await rpc(`wallet_watchAsset`, {
+        type: `ERC20`,
+        options: {
+            address: `0x5BCda6E59262A96a599Ea938c9B679714c105Bba`,
+            symbol: `wBKC`,
+            decimals: 18,
         },
     });
 });
