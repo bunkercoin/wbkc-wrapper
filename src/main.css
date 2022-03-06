@@ -15,6 +15,22 @@ main {
     row-gap: 0px;
 }
 
+@media screen and (max-width: 750px) {
+    main {
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(2, 1fr);
+    }
+
+    .header-link {
+        float: none;
+    }
+
+    .header-link::before {
+        content: "\A";
+        white-space: pre;
+    }
+}
+
 /* Make tables look epic */
 td,
 th {
