@@ -3,8 +3,8 @@
 
 @font-face {
     font-family: "Comic Neue";
-    src: url("/assets/comic-neue/ComicNeue-Regular.woff2") format("woff2"),
-        url("/assets/comic-neue/ComicNeue-Regular.woff") format("woff");
+    src: url("/assets/comic-neue/ComicNeue.woff2") format("woff2"),
+        url("/assets/comic-neue/ComicNeue.woff") format("woff");
 }
 
 main {
