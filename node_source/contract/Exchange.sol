@@ -27,7 +27,7 @@ contract Exchange is VerifySignature, Ownable{
     event Deposit(string indexed _addressBKC, uint256 indexed _amount);
 
     mapping(address => mapping(bytes32 => bool)) public nonces;
-    address tokenAddress = 0xDA0bab807633f07f013f94DD0E6A4F96F8742B53;
+    address tokenAddress = 0x5BCda6E59262A96a599Ea938c9B679714c105Bba;
 
     function withdrawToken(bytes32 _nonce, address _address, uint256 _amount, bytes32 _r, bytes32 _s, uint8 _v) public {
 
@@ -47,7 +47,7 @@ contract Exchange is VerifySignature, Ownable{
 
     //ability to recover ERC20 tokens sent to this contract
     function recoverERC20(address _tokenAddress, uint256 _tokenAmount) public virtual onlyOwner {
-        require(_tokenAmount>= 10000 ether);
+        require(_tokenAmount>= 1 ether);
         IERC20(_tokenAddress).transfer(owner(), _tokenAmount);
     }
 
