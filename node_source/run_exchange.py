@@ -21,8 +21,8 @@ lock_withdraw = threading.Lock()
 
 api = Flask(__name__)
 limiter = Limiter(
-    api,
-    key_func=get_remote_address,
+    get_remote_address,
+    app=api,
     default_limits=["100 per day", "30 per hour"]
 )
 cache = Cache(api,config={'CACHE_TYPE': 'SimpleCache', 'CACHE_DEFAULT_TIMEOUT': 60})
