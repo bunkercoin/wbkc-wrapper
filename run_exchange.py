@@ -11,7 +11,7 @@ import time
 import sqlite3
 import address_utils
 import random
-from web3.auto import w3
+from web3 import Web3
 from eth_account.messages import encode_defunct
 
 import threading
@@ -27,16 +27,13 @@ limiter = Limiter(
 )
 cache = Cache(api,config={'CACHE_TYPE': 'SimpleCache', 'CACHE_DEFAULT_TIMEOUT': 60})
 
-#my node details
+# Config
 BKC_PRIVATE_KEY = ''
 NODE_ADDRESS = ''
-
 MATIC_PRIVATE_KEY = ''
-
 TAX = 50 # BKC per transaction (0.02 network cost)
-
-RPC = "http://%s:%s@127.0.0.1:9999"%("user", "pass")
-
+RPC = "http://%s:%s@127.0.0.1:9999"%("user", "pass") # Change to your RPC username, password, port and ip.
+w3 = Web3(Web3.HTTPProvider("")) # Add your HTTP Provider here
 
 #rpc connection
 
@@ -51,7 +48,6 @@ def init():
 	db.execute("CREATE TABLE IF NOT EXISTS promise (matic text, value text, nonce text, date text, r text, s text, v text)")
 	db.execute("CREATE INDEX IF NOT EXISTS idx_imatic ON promise (matic)")
 	con.commit()
-	con.close()
 
 #allow multithreaded database access	
 con = sqlite3.connect('database.db', check_same_thread=False)
@@ -106,20 +102,18 @@ def getDepositAddress(addressMatic):
 	return json.dumps(result)
 	
 @api.route('/getBalance/<string:addressMatic>', methods=['GET'])
-@cache.memoize(60)	
 def getBalance(addressMatic):
 	
 	#validate input
 	validateMaticAddress(addressMatic)
 	
 	rpc_connection = AuthServiceProxy(RPC, timeout = 20)
-	total = rpc_connection.getbalance(addressMatic, 60)
+	total = rpc_connection.getbalance(addressMatic)
 	
 	return json.dumps(total)
 	
 	
 @api.route('/getBalanceUnconfirmed/<string:addressMatic>', methods=['GET'])
-@cache.memoize(60)	
 def getBalanceUnconfirmed(addressMatic):
 	
 	#validate input
@@ -132,7 +126,7 @@ def getBalanceUnconfirmed(addressMatic):
 
 
 @api.route('/getPromises/<string:addressMatic>', methods=['GET'])
-@cache.memoize(60)
+@cache.memoize(120)
 def getPromises(addressMatic):
 	#validate input
 	validateMaticAddress(addressMatic)
@@ -142,7 +136,6 @@ def getPromises(addressMatic):
 	
 
 @api.route('/emitwBKC/<string:addressMatic>', methods=['GET'])
-@cache.memoize(60)
 def emitwBKC(addressMatic): 
 
 	#validate input
@@ -154,7 +147,7 @@ def emitwBKC(addressMatic):
 	
 	with lock_withdraw:
 		rpc_connection = AuthServiceProxy(RPC, timeout = 20)
-		coins = rpc_connection.getbalance(addressMatic, 60)
+		coins = rpc_connection.getbalance(addressMatic)
 	
 		#check the user has at least 10kBKC to withdraw but less than 5M
 		if coins<10000:
