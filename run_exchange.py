@@ -1,4 +1,4 @@
-from flask import Flask, json
+from flask import Flask, json, request
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_caching import Cache
@@ -21,7 +21,7 @@ lock_withdraw = threading.Lock()
 
 api = Flask(__name__)
 limiter = Limiter(
-    get_remote_address,
+    key_func=lambda: request.remote_addr,
     app=api,
     default_limits=["100 per day", "30 per hour"]
 )
@@ -31,9 +31,9 @@ cache = Cache(api,config={'CACHE_TYPE': 'SimpleCache', 'CACHE_DEFAULT_TIMEOUT': 
 BKC_PRIVATE_KEY = ''
 NODE_ADDRESS = ''
 MATIC_PRIVATE_KEY = ''
-TAX = 50 # BKC per transaction (0.02 network cost)
-RPC = "http://%s:%s@127.0.0.1:9999"%("user", "pass") # Change to your RPC username, password, port and ip.
-w3 = Web3(Web3.HTTPProvider("")) # Add your HTTP Provider here
+TAX = 1 # BKC per transaction (0.02 network cost)
+RPC = "http://%s:%s@127.0.0.1:14201"%("username", "password") # Change to your RPC username, password, port and ip.
+w3 = Web3(Web3.HTTPProvider("https://mumbai.polygonscan.com")) # Add your HTTP Provider here
 
 #rpc connection
 
@@ -64,9 +64,10 @@ def derive_secret(derivation):
 	return secret
 
 def validateMaticAddress(address):
-	if not w3.isChecksumAddress(address):
-		raise Exception("Not a matic checksum address")
-	return True
+    if not w3.isAddress(address):
+        raise Exception("Not a valid matic address")
+    return True
+
 	
 def to_32byte_hex(val):
 	return w3.toHex(w3.toBytes(val).rjust(32, b'\0'))
@@ -154,7 +155,7 @@ def emitwBKC(addressMatic):
 			raise Exception("Not enough deposit")
 		
 		if coins>5000000:
-			raise Exception("Too much deposit! must manually wrap")
+			raise Exception("Too much deposit! Please message Yoyois to manually wrap!")
 		
 		# Tax BKC fixed fee
 		coins = float(coins)-TAX
@@ -179,4 +180,4 @@ def emitwBKC(addressMatic):
 
 if __name__ == '__main__':
 	init()	
-	api.run(host="0.0.0.0", port=5000, threaded=True)
+	api.run(host="0.0.0.0", port=5000, threaded=True, debug=True)
