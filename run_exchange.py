@@ -1,7 +1,8 @@
-from flask import Flask, json, request
+from flask import Flask, json
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_caching import Cache
+from flask_cors import CORS  # Import the CORS extension
 
 from bitcoinrpc.authproxy import AuthServiceProxy, JSONRPCException
 import base64
@@ -20,8 +21,9 @@ lock_write = threading.Lock()
 lock_withdraw = threading.Lock()
 
 api = Flask(__name__)
+CORS(api) 
 limiter = Limiter(
-    key_func=lambda: request.remote_addr,
+    get_remote_address,
     app=api,
     default_limits=["100 per day", "30 per hour"]
 )
@@ -31,7 +33,7 @@ cache = Cache(api,config={'CACHE_TYPE': 'SimpleCache', 'CACHE_DEFAULT_TIMEOUT': 
 BKC_PRIVATE_KEY = ''
 NODE_ADDRESS = ''
 MATIC_PRIVATE_KEY = ''
-TAX = 1 # BKC per transaction (0.02 network cost)
+TAX = 50 # BKC per transaction (0.02 network cost)
 RPC = "http://%s:%s@127.0.0.1:14201"%("username", "password") # Change to your RPC username, password, port and ip.
 w3 = Web3(Web3.HTTPProvider("https://mumbai.polygonscan.com")) # Add your HTTP Provider here
 
@@ -64,13 +66,12 @@ def derive_secret(derivation):
 	return secret
 
 def validateMaticAddress(address):
-    if not w3.isAddress(address):
-        raise Exception("Not a valid matic address")
-    return True
-
+	if not w3.is_checksum_address(address):
+		raise Exception("Not a matic checksum address")
+	return True
 	
 def to_32byte_hex(val):
-	return w3.toHex(w3.toBytes(val).rjust(32, b'\0'))
+	return w3.to_hex(w3.to_bytes(val).rjust(32, b'\0'))
 
 @api.errorhandler(Exception)
 def handle_invalid_usage(error):
@@ -144,23 +145,23 @@ def emitwBKC(addressMatic):
 	
 	#generate a nonce to avoid respending
 	nonce = str(time.time()+random.random()) + MATIC_PRIVATE_KEY + addressMatic
-	nonce = w3.sha3(text = nonce)
+	nonce = w3.keccak(text = nonce)
 	
 	with lock_withdraw:
 		rpc_connection = AuthServiceProxy(RPC, timeout = 20)
 		coins = rpc_connection.getbalance(addressMatic)
 	
 		#check the user has at least 10kBKC to withdraw but less than 5M
-		if coins<10000:
+		if coins<10:
 			raise Exception("Not enough deposit")
 		
 		if coins>5000000:
-			raise Exception("Too much deposit! Please message Yoyois to manually wrap!")
+			raise Exception("Too much deposit! must manually wrap")
 		
 		# Tax BKC fixed fee
 		coins = float(coins)-TAX
-		coinsWei = w3.toWei(coins, 'ether')
-		hash = w3.solidityKeccak(['bytes32', 'address', 'uint256'], [nonce, addressMatic, coinsWei])
+		coinsWei = w3.to_wei(coins, 'ether')
+		hash = w3.solidity_keccak(['bytes32', 'address', 'uint256'], [nonce, addressMatic, coinsWei])
 		message = encode_defunct(hexstr=hash.hex())
 		signed_message =  w3.eth.account.sign_message(message, private_key=MATIC_PRIVATE_KEY)
 	
